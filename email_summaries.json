@@ -1,0 +1,52 @@
+[
+  {
+    "id": "5437",
+    "sender": "Gokulan Venkatesan <gokulan.venkatesan@genorai.com>",
+    "subject": "Today Task",
+    "summary": "Here's a detailed summary of the email:\n\n*   **Main Purpose:** Gokulan is informing the recipient that their task for the day is to prepare an email regarding a specified topic (represented as \"[Topic of Email]\").\n*   **Key Point:** Gokulan is taking responsibility for drafting an email on the stated topic.\n*   **Action Item:** The recipient is asked to inform Gokulan if they require any additional information related to the email's preparation.\n*   **Relevant Detail:** The email sender is Gokulan.",
+    "timestamp": 1763915341.942842,
+    "is_confidential": false,
+    "was_blocked": false,
+    "timestamp_str": "2025-11-23 21:59:01"
+  },
+  {
+    "id": "5436",
+    "sender": "Gokulan Venkatesan <gokulan.venkatesan@genorai.com>",
+    "subject": "I missed you",
+    "summary": "Here's a detailed summary of the email:\n\n*   **Main Purpose:** Gokulan is sending a brief message to his mother to express that he misses her.\n\n*   **Key Point:** Gokulan misses his mother.\n\n*   **Sender:** Gokulan\n*   **Recipient:** Mom",
+    "timestamp": 1763914746.52249,
+    "is_confidential": false,
+    "was_blocked": false,
+    "timestamp_str": "2025-11-23 21:49:06"
+  },
+  {
+    "id": "5435",
+    "sender": "Gokulan Venkatesan <gokulan.venkatesan@genorai.com>",
+    "subject": "Hai",
+    "summary": "Here's a detailed summary of the email:\n\n*   **Purpose:** Gokulan is informing Jau that he will be arriving this Wednesday.\n*   **Key Point:** Gokulan intends to visit Oting Location upon arrival.\n*   **Date:** Wednesday (implied as the arrival date).\n*   **Sender:** Gokulan\n*   **Recipient:** Jau",
+    "timestamp": 1763914579.045156,
+    "is_confidential": false,
+    "was_blocked": false,
+    "timestamp_str": "2025-11-23 21:46:19"
+  },
+  {
+    "id": "5434",
+    "sender": "Gokulan Venkatesan <gokulan.venkatesan@genorai.com>",
+    "subject": "Hai bro",
+    "summary": "- Hai bro  Hai simple converstion",
+    "timestamp": 1763914390.875576,
+    "is_confidential": false,
+    "was_blocked": false,
+    "timestamp_str": "2025-11-23 21:43:10"
+  },
+  {
+    "id": "5433",
+    "sender": "Gokulan Venkatesan <gokulan.venkatesan@genorai.com>",
+    "subject": "hai bro",
+    "summary": "*   One person initiated contact with an informal greeting.\n*   The recipient returned the greeting.\n*   The recipient then inquired about the first person's well-being.",
+    "timestamp": 1763914087.291596,
+    "is_confidential": false,
+    "was_blocked": false,
+    "timestamp_str": "2025-11-23 21:38:07"
+  }
+]
