@@ -6,7 +6,7 @@ import main
 
 app = Flask(__name__)
 
-# Global variables to control the background thread
+
 monitor_thread = None
 stop_event = threading.Event()
 

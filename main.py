@@ -32,41 +32,33 @@ except ImportError:
 
 load_dotenv()
 
-# ---------- Configuration from env ----------
 IMAP_HOST = os.getenv("IMAP_HOST", "imap.gmail.com")
-IMAP_USER = os.getenv("IMAP_USER")  # required
-IMAP_PASS = os.getenv("IMAP_PASS")  # required
+IMAP_USER = os.getenv("IMAP_USER")
+IMAP_PASS = os.getenv("IMAP_PASS")
 DOMAIN_FILTER = os.getenv("DOMAIN_FILTER", "@example.com").lower()
 POLL_SECONDS = int(os.getenv("POLL_SECONDS", "30"))
 
-# Gemini API Key
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-# Confidentiality protection - PREVENTS sending sensitive data to LLM
 ENABLE_CONFIDENTIALITY_CHECK = os.getenv("ENABLE_CONFIDENTIALITY_CHECK", "true").lower() == "true"
 CONFIDENTIAL_KEYWORDS = os.getenv("CONFIDENTIAL_KEYWORDS", "confidential,internal,proprietary,classified,secret,password,api key,token,private,restricted").lower().split(",")
 
-# Twilio config (required)
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 TWILIO_WHATSAPP_FROM = os.getenv("TWILIO_WHATSAPP_FROM", "whatsapp:+14155238886")
-RECIPIENT_NUMBER = os.getenv("RECIPIENT_NUMBER")  # e.g. +919361620860
+RECIPIENT_NUMBER = os.getenv("RECIPIENT_NUMBER")
 
-# Optional Content Template
 CONTENT_SID = os.getenv("CONTENT_SID")
 
-# Basic sanity checks
 if not IMAP_USER or not IMAP_PASS:
     raise SystemExit("Please set IMAP_USER and IMAP_PASS in environment variables.")
 if not TWILIO_ACCOUNT_SID or not TWILIO_AUTH_TOKEN or not RECIPIENT_NUMBER:
     raise SystemExit("Please set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN and RECIPIENT_NUMBER in env.")
 
-# Initialize Gemini if available and configured
 if GEMINI_AVAILABLE and GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
     print("✓ Gemini API configured")
 
-# ---------- Helpers ----------
 def decode_mime_words(s):
     if not s:
         return ""
@@ -84,13 +76,10 @@ def clean_markdown_formatting(text):
     if not text:
         return text
     
-    # Remove bold/italic markers (* and **)
-    cleaned = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)  # **bold** -> bold
-    cleaned = re.sub(r'\*([^*]+)\*', r'\1', cleaned)    # *italic* -> italic
-    
-    # Remove other common markdown symbols
-    cleaned = re.sub(r'__([^_]+)__', r'\1', cleaned)    # __bold__ -> bold
-    cleaned = re.sub(r'_([^_]+)_', r'\1', cleaned)      # _italic_ -> italic
+    cleaned = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)
+    cleaned = re.sub(r'\*([^*]+)\*', r'\1', cleaned)
+    cleaned = re.sub(r'__([^_]+)__', r'\1', cleaned)
+    cleaned = re.sub(r'_([^_]+)_', r'\1', cleaned)
     
     return cleaned
 
@@ -121,12 +110,11 @@ def get_email_body(msg):
         except Exception:
             return str(msg.get_payload(decode=True))
 
-# ---------- Enhanced Redaction with Confidentiality Detection ----------
 EMAIL_RE = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b')
 PHONE_RE = re.compile(r'(\+?\d[\d\-\s]{6,}\d)')
 CREDIT_RE = re.compile(r'\b(?:\d[ -]*?){13,19}\b')
 SSN_RE = re.compile(r'\b\d{3}-\d{2}-\d{4}\b')
-API_KEY_RE = re.compile(r'\b[A-Za-z0-9_-]{32,}\b')  # Generic API key pattern
+API_KEY_RE = re.compile(r'\b[A-Za-z0-9_-]{32,}\b')
 PASSWORD_RE = re.compile(r'(?i)(password|passwd|pwd)[\s:=]+\S+')
 IP_RE = re.compile(r'\b(?:\d{1,3}\.){3}\d{1,3}\b')
 TOKEN_RE = re.compile(r'(?i)(bearer|token|jwt)[\s:=]+[A-Za-z0-9_.-]+')
@@ -156,13 +144,10 @@ def redact_text(text, extra_masks=None):
     if not text:
         return text, {}, False
     
-    # FIRST: Check for confidential markers BEFORE any processing
     is_confidential, markers = contains_confidential_markers(text)
     
     s = text
     masks = {}
-    
-    # Apply all redaction patterns
     s, n = EMAIL_RE.subn('[REDACTED_EMAIL]', s); masks['emails'] = n
     s, n = PHONE_RE.subn('[REDACTED_PHONE]', s); masks['phones'] = n
     s, n = CREDIT_RE.subn('[REDACTED_NUMBER]', s); masks['numbers'] = n
@@ -182,7 +167,6 @@ def redact_text(text, extra_masks=None):
     
     return s, masks, is_confidential
 
-# ---------- Summarization with Gemini ----------
 def summarize_with_gemini(text, max_tokens=300):
     """Summarize using Google Gemini API."""
     if not GEMINI_AVAILABLE or not GEMINI_API_KEY:
@@ -190,7 +174,6 @@ def summarize_with_gemini(text, max_tokens=300):
         return None
     
     try:
-        # Configure safety settings to be more permissive
         safety_settings = [
             {
                 "category": "HARM_CATEGORY_HARASSMENT",
@@ -227,8 +210,7 @@ Give a brief summary in plain language. No bullet points, no labels, no formatti
             safety_settings=safety_settings
         )
         
-        # Better error handling for blocked responses
-        if response.candidates and response.candidates[0].finish_reason != 1:  # 1 = STOP (normal completion)
+        if response.candidates and response.candidates[0].finish_reason != 1:
             finish_reason = response.candidates[0].finish_reason
             reason_map = {2: "SAFETY", 3: "RECITATION", 4: "OTHER"}
             reason_text = reason_map.get(finish_reason, f"UNKNOWN({finish_reason})")
@@ -256,12 +238,9 @@ def summarize_with_llm(text, max_tokens=300):
     if not text:
         return ""
     
-    # Try Gemini first
     summary = summarize_with_gemini(text, max_tokens)
     if summary:
         return summary
-    
-    # Use fallback if Gemini fails
     print("Using fallback summarization (no LLM)")
     return fallback_summarize(text)
 
@@ -274,14 +253,11 @@ def create_safe_summary(subject, body, is_confidential, masks):
     If not confidential: Safe to use Gemini API
     """
     if is_confidential and ENABLE_CONFIDENTIALITY_CHECK:
-        # 🔒 CONFIDENTIAL EMAIL DETECTED - BYPASS ALL LLM PROCESSING
         print("🔒 CONFIDENTIAL email detected - LLM processing BLOCKED")
         
         confidential_note = "⚠️ CONFIDENTIAL EMAIL - LLM bypassed for security"
         markers_found = masks.get('confidential_markers', [])
         redaction_count = sum(v for k, v in masks.items() if k != 'confidential_markers')
-        
-        # Extract first few sentences WITHOUT sending to any LLM
         sentences = re.split(r'(?<=[.!?])\s+', body.strip())
         preview = ". ".join(sentences[:2])[:200]
         if len(body) > 200:
@@ -299,21 +275,18 @@ Preview (local only):
 
 ⚠️ Full content NOT sent to any external API"""
         
-        return summary, True  # True = confidential, was NOT sent to LLM
+        return summary, True
     else:
-        # ✅ Safe to use LLM - no confidential markers detected
         print("✅ Email safe - processing with Gemini")
         full_text = f"{subject}\n\n{body}"
         summary = summarize_with_llm(full_text)
-        return summary, False  # False = not confidential, was sent to LLM
+        return summary, False
 
-# ---------- Prepare template variables ----------
 def prepare_content_variables(sender, subject, summary):
     """Adjust according to your content template's placeholders."""
     vars_map = {"1": subject[:500], "2": summary[:1000]}
     return vars_map
 
-# ---------- Twilio send ----------
 twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 def send_via_twilio_text(recipient_number, text):
@@ -427,13 +400,11 @@ def initialize_existing_emails():
     except Exception as e:
         print(f"❌ Error during initialization: {e}")
 
-# ---------- Main processing ----------
 def process_mail():
     mail = imaplib.IMAP4_SSL(IMAP_HOST)
     mail.login(IMAP_USER, IMAP_PASS)
     mail.select("INBOX")
     
-    # Get ALL unread messages first
     status, data = mail.search(None, 'UNSEEN')
     if status != "OK":
         print("IMAP search error or no messages.")
@@ -442,10 +413,8 @@ def process_mail():
 
     all_ids = data[0].split()
     
-    # Load already processed emails
     processed = load_processed_emails()
     
-    # Filter out already processed emails
     ids = [msg_id for msg_id in all_ids if msg_id.decode() not in processed]
     
     if len(all_ids) > 0:
@@ -460,16 +429,13 @@ def process_mail():
             raw = msg_data[0][1]
             msg = email.message_from_bytes(raw)
             
-            # Get unique message ID
             message_id = msg.get("Message-ID", num.decode())
             
             sender = decode_mime_words(msg.get("From", ""))
             subject = decode_mime_words(msg.get("Subject", ""))
 
-            # Filter by sender domain
             if DOMAIN_FILTER and DOMAIN_FILTER not in sender.lower():
                 print(f"⏭️  Skipping: {sender} (subject: {subject})")
-                # Mark as processed so we don't check it again
                 save_processed_email(num.decode())
                 continue
 
@@ -477,15 +443,13 @@ def process_mail():
             
             body = get_email_body(msg)
             
-            # STEP 1: Redact sensitive data
             redacted_body, body_masks, body_confidential = redact_text(body)
             redacted_subject, subject_masks, subject_confidential = redact_text(subject)
             
-            # Combine masks
             all_masks = {**body_masks, **subject_masks}
             is_confidential = body_confidential or subject_confidential
 
-            # STEP 2: Create safe summary (with confidentiality protection)
+
             summary, was_blocked = create_safe_summary(
                 redacted_subject, 
                 redacted_body, 
@@ -493,7 +457,6 @@ def process_mail():
                 all_masks
             )
 
-            # Save summary for UI
             summary_data = {
                 "id": num.decode(),
                 "sender": sender,
@@ -505,10 +468,7 @@ def process_mail():
             }
             save_email_summary(summary_data)
 
-            # STEP 3: Compose message for WhatsApp (clean markdown formatting)
             redaction_summary = ", ".join([f"{k}: {v}" for k, v in all_masks.items() if k != 'confidential_markers' and v > 0])
-            
-            # Clean markdown formatting from summary for WhatsApp
             clean_summary = clean_markdown_formatting(summary)
             
             send_text = f"""From: {sender}
@@ -520,7 +480,6 @@ Summary:
 {'🔒 Protected: No data sent to external APIs' if was_blocked else 'Thank you'}
 Redactions: {redaction_summary if redaction_summary else 'None'}"""
 
-            # STEP 4: Send via Twilio
             try:
                 if CONTENT_SID:
                     vars_map = prepare_content_variables(sender, redacted_subject, summary)
@@ -530,7 +489,6 @@ Redactions: {redaction_summary if redaction_summary else 'None'}"""
                     sid = send_via_twilio_text(RECIPIENT_NUMBER, send_text[:1500])
                     print(f"✅ Sent text message SID: {sid}")
                 
-                # Mark as read AND save as processed
                 mail.store(num, '+FLAGS', '\\Seen')
                 save_processed_email(num.decode())
                 
@@ -553,7 +511,6 @@ def start_monitoring(stop_event=None):
     print(f"⏱️  Poll interval: {POLL_SECONDS}s")
     print("=" * 60)
     
-    # Check if this is first run
     if get_last_check_timestamp() is None:
         initialize_existing_emails()
     
@@ -568,8 +525,7 @@ def start_monitoring(stop_event=None):
             save_last_check_timestamp()
         except Exception as e:
             print(f"❌ Main loop error: {e}")
-            
-        # Sleep with check
+        
         for _ in range(POLL_SECONDS):
             if stop_event and stop_event.is_set():
                 break

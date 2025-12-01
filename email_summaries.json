@@ -1,5 +1,65 @@
 [
   {
+    "id": "5449",
+    "sender": "Gokulan Venkatesan <gokulan.venkatesan@genorai.com>",
+    "subject": "Meeting Scheduled on Wednesday",
+    "summary": "Gokulan's email informs the team about a meeting scheduled for Wednesday at 3:00 PM. Team members are expected to be on time, and the agenda will be shared later.",
+    "timestamp": 1763989615.72014,
+    "is_confidential": false,
+    "was_blocked": false,
+    "timestamp_str": "2025-11-24 18:36:55"
+  },
+  {
+    "id": "5448",
+    "sender": "Gokulan Venkatesan <gokulan.venkatesan@genorai.com>",
+    "subject": "My Details for Your Reference",
+    "summary": "Gokulan V sent Santhosh his contact information. The email includes his name, phone number, and email address.",
+    "timestamp": 1763989548.599489,
+    "is_confidential": false,
+    "was_blocked": false,
+    "timestamp_str": "2025-11-24 18:35:48"
+  },
+  {
+    "id": "5447",
+    "sender": "Gokulan Venkatesan <gokulan.venkatesan@genorai.com>",
+    "subject": "Request for Your Details",
+    "summary": "Gokulan is asking the team to update their records. They need everyone to provide their full name, department, phone number, email ID, and college/company name as soon as possible.",
+    "timestamp": 1763989444.341332,
+    "is_confidential": false,
+    "was_blocked": false,
+    "timestamp_str": "2025-11-24 18:34:04"
+  },
+  {
+    "id": "5445",
+    "sender": "Gokulan Venkatesan <gokulan.venkatesan@genorai.com>",
+    "subject": "Sender",
+    "summary": "Gokulan is providing their user details as requested, including their name, email, and another identifier. They are offering to provide more information if needed.",
+    "timestamp": 1763989001.9551418,
+    "is_confidential": false,
+    "was_blocked": false,
+    "timestamp_str": "2025-11-24 18:26:41"
+  },
+  {
+    "id": "5444",
+    "sender": "Gokulan Venkatesan <gokulan.venkatesan@genorai.com>",
+    "subject": "Today Task",
+    "summary": "Gokulan is assigning you a task related to [Topic of Task], which involves [Briefly describe the task]. Contact Gokulan if you need more information.",
+    "timestamp": 1763988601.47896,
+    "is_confidential": false,
+    "was_blocked": false,
+    "timestamp_str": "2025-11-24 18:20:01"
+  },
+  {
+    "id": "5438",
+    "sender": "Gokulan Venkatesan <gokulan.venkatesan@genorai.com>",
+    "subject": "Task Today",
+    "summary": "- Task Today  Dear [Recipient Name],\r \r Please create a task related to HTML development.\n- I would appreciate it if\r you could include details such as the specific goal, required resources,\r and the expected deadline.\n- Thanks,\r Gokulan",
+    "timestamp": 1763988293.688437,
+    "is_confidential": false,
+    "was_blocked": false,
+    "timestamp_str": "2025-11-24 18:14:53"
+  },
+  {
     "id": "5437",
     "sender": "Gokulan Venkatesan <gokulan.venkatesan@genorai.com>",
     "subject": "Today Task",
